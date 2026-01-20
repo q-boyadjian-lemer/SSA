@@ -8,7 +8,6 @@ st.set_page_config(page_title="CSA – Classification environnementale", layout=
 
 st.title("CSA – Classification environnementale des métaux massifs")
 
-
 # =====================================================
 # CONSTANTES
 # =====================================================
