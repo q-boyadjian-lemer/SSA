@@ -7,22 +7,21 @@ import numpy as np
 st.set_page_config(page_title="Classification du plomb pour le transport", layout="wide")
 
 st.title("Classification du plomb pour le transport")
-st.markdown(""
+st.markdown("")
 
 # =====================================================
 # CONSTANTES
 # =====================================================
-DENSITY_PB = 11.35e-6  # kg/mm³ (plomb)
+DENSITY_PB = 11.35e-6  # kg/mm³
 
 # =====================================================
-# 1. GÉOMÉTRIE DE L’OBJET
+# 1. DESCRIPTION DE L’OBJET
 # =====================================================
 st.header("1. Description de l’objet")
 
 geometry_type = st.radio(
     "Type de géométrie",
-    ["Sphère", "Parallélépipède (Cuboid)", "Géométrie libre"],
-    help="La géométrie sert uniquement à calculer la SSA réelle de l’objet."
+    ["Sphère", "Parallélépipède (Cuboid)", "Géométrie libre"]
 )
 
 if geometry_type == "Sphère":
@@ -42,24 +41,37 @@ else:  # Géométrie libre
     surface = st.number_input("Surface totale (mm²)", value=183950.0)
     volume = st.number_input("Volume (mm³)", value=2.2e6)
 
-# Masse et SSA objet
-mass_kg = volume * DENSITY_PB
+# =====================================================
+# 2. MASSE DE L’OBJET
+# =====================================================
+st.subheader("Masse de l’objet")
+
+mass_auto_kg = volume * DENSITY_PB
+
+st.markdown("""
+La masse ci-dessous est **calculée automatiquement** à partir du volume et de la densité du plomb.  
+Vous pouvez la **modifier** si une masse mesurée est disponible.
+""")
+
+mass_kg = st.number_input(
+    "Masse de l’objet (kg)",
+    value=mass_auto_kg,
+    min_value=0.0,
+    format="%.6f"
+)
+
 mass_mg = mass_kg * 1e6
 SSA_object = surface / mass_mg
 
-st.markdown("#### Propriétés calculées automatiquement")
-st.write(f"• Masse de l’objet : **{mass_kg:.4f} kg**")
+st.markdown("#### Propriétés utilisées pour la classification")
+st.write(f"• Surface totale : **{surface:.1f} mm²**")
+st.write(f"• Masse utilisée : **{mass_kg:.6f} kg**")
 st.write(f"• SSA de l’objet : **{SSA_object:.6f} mm²/mg**")
 
 # =====================================================
-# 2. DONNÉES T/Dp (COMMUNES)
+# 3. DONNÉES T/Dp
 # =====================================================
 st.header("2. Données issues des essais T/Dp")
-
-st.markdown("""
-Ces données proviennent des essais de relargage normalisés.
-Elles sont **indépendantes de la géométrie réelle de l’objet**.
-""")
 
 SSA_test = st.number_input(
     "SSA utilisée dans l’essai T/Dp (mm²/mg)",
@@ -67,14 +79,11 @@ SSA_test = st.number_input(
 )
 
 # =====================================================
-# 3. CLASSIFICATION AIGUË
+# 4. CLASSIFICATION AIGUË
 # =====================================================
 st.header("3. Classification aiguë (Acute)")
 
-st.info("""
-🔹 **Règle réglementaire**  
-La classification aiguë est évaluée **uniquement à 1 mg/L**.
-""")
+st.info("La classification aiguë est évaluée **uniquement à 1 mg/L**.")
 
 ERV_acute = st.number_input("ERV aigu (µg/L)", value=6.2)
 Pb_release_1 = st.number_input(
@@ -93,13 +102,12 @@ st.write(f"CSA aiguë (1 mg/L) : **{CSA_acute:.4f} mm²/mg**")
 st.write(f"➡️ **Résultat aigu : {acute_result}**")
 
 # =====================================================
-# 4. CLASSIFICATION CHRONIQUE
+# 5. CLASSIFICATION CHRONIQUE
 # =====================================================
 st.header("4. Classification chronique (Chronic)")
 
 st.info("""
-🔹 **Règle réglementaire**  
-La classification chronique est évaluée à **deux charges massiques** :
+La classification chronique est évaluée à **deux charges massiques réglementaires** :
 - 0,1 mg/L (plus sévère)
 - 1 mg/L
 """)
@@ -126,7 +134,7 @@ st.write(f"CSA chronique @ 1 mg/L : **{CSA_chronic_1:.4f} mm²/mg**")
 st.write(f"➡️ **Résultat chronique : {chronic_result}**")
 
 # =====================================================
-# 5. SYNTHÈSE FINALE
+# 6. SYNTHÈSE
 # =====================================================
 st.header("5. Synthèse de classification")
 
@@ -134,8 +142,8 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.subheader("Aigu")
-    st.metric("Classification", acute_result)
+    st.metric("Résultat", acute_result)
 
 with col2:
     st.subheader("Chronique")
-    st.metric("Classification", chronic_result)
+    st.metric("Résultat", chronic_result)
