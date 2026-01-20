@@ -1,3 +1,13 @@
+import streamlit as st
+import numpy as np
+
+# =====================================================
+# CONFIGURATION
+# =====================================================
+st.set_page_config(page_title="Classification du plomb pour le transport", layout="wide")
+
+st.title("Classification du plomb pour le transport")
+st.markdown("")
 
 # =====================================================
 # CONSTANTES
