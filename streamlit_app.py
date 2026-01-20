@@ -4,16 +4,10 @@ import numpy as np
 # =====================================================
 # CONFIGURATION
 # =====================================================
-st.set_page_config(page_title="CSA – Classification environnementale", layout="wide")
+st.set_page_config(page_title="Classification du plomb pour le transport", layout="wide")
 
-st.title("CSA – Classification environnementale des métaux massifs")
-st.markdown("""
-Cette application applique l’**approche CSA (Critical Surface Area)** conformément aux
-règles réglementaires **acute** et **chronic** pour les métaux massifs.
-
-👉 **La charge massique n’est jamais choisie par l’utilisateur** :  
-elle est **imposée par le scénario réglementaire**.
-""")
+st.title("Classification du plomb pour le transport")
+st.markdown("")
 
 # =====================================================
 # CONSTANTES
