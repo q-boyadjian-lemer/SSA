@@ -16,30 +16,30 @@ geometry_type = st.sidebar.radio(
     "Type de géométrie",
     ["Sphère", "Cube", "Cuboid", "Libre"]
 )
+DENSITY_PB = 11.34e-6  # kg/mm³
 
 # =====================================================
 # PARAMÈTRES DE LA GÉOMÉTRIE
 # =====================================================
 st.header("2. Paramètres de la géométrie")
 
-col1, col2 = st.columns([1, 1])
+col1, col2 = st.columns([1,1])
 
 with col1:
-    # Masse
-    mass_slider = st.slider("Masse (kg)", 0.1, 100.0, 25.0, step=0.1)
-    mass_manual = st.number_input("Ou saisir la masse (kg)", value=mass_slider)
-    mass_kg = mass_manual
-
     if geometry_type == "Sphère":
         diameter_slider = st.slider("Diamètre (mm)", 0.5, 500.0, 50.0)
         diameter_manual = st.number_input("Ou saisir le diamètre (mm)", value=diameter_slider)
         diameter = diameter_manual
+        volume = (4/3) * np.pi * (diameter/2)**3  # mm³
+        mass_kg = volume * DENSITY_PB
         geometry = Sphere(diameter_mm=diameter)
 
     elif geometry_type == "Cube":
         side_slider = st.slider("Longueur du côté (mm)", 5.0, 500.0, 100.0)
         side_manual = st.number_input("Ou saisir la longueur du côté (mm)", value=side_slider)
         side = side_manual
+        volume = side**3
+        mass_kg = volume * DENSITY_PB
         geometry = Cuboid(side, side, side, mass_kg)
 
     elif geometry_type == "Cuboid":
@@ -51,11 +51,14 @@ with col1:
         T_manual = st.number_input("Ou saisir l'épaisseur (mm)", value=T_slider)
 
         L, W, T = L_manual, W_manual, T_manual
+        volume = L*W*T
+        mass_kg = volume * DENSITY_PB
         geometry = Cuboid(L, W, T, mass_kg)
 
     else:  # Géométrie libre
         SSA = st.number_input("Surface spécifique (mm²/mg)", value=1000.0)
         volume = st.number_input("Volume (mm³)", value=1000.0)
+        mass_kg = volume * DENSITY_PB
 
         class CustomGeometry:
             def __init__(self, ssa, volume, mass):
@@ -66,6 +69,8 @@ with col1:
                 return self._ssa
 
         geometry = CustomGeometry(SSA, volume, mass_kg)
+
+st.write(f"Masse calculée automatiquement : {mass_kg:.4f} kg")
 
 # =====================================================
 # VISUALISATION 3D
