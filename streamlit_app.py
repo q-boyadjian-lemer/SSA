@@ -147,5 +147,3 @@ with col2:
     st.subheader("Chronique")
     st.metric("Résultat", chronic_result)
 
-st.markdown("""
----
